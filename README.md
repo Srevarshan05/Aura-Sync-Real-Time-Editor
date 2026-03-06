@@ -4,229 +4,163 @@
 
 <br/>
 
-[![Node.js](https://img.shields.io/badge/Node.js-Runtime-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org)
-[![Docker](https://img.shields.io/badge/Docker-Sandboxed_Compilation-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://docker.com)
-[![WebSockets](https://img.shields.io/badge/WebSockets-Sub_100ms_Sync-00B0FF?style=for-the-badge)](.)
-[![GCP](https://img.shields.io/badge/GCP-Cloud_Deployed-4285F4?style=for-the-badge&logo=googlecloud&logoColor=white)](https://cloud.google.com)
-[![Arduino](https://img.shields.io/badge/Arduino_CLI-Cloud_Compilation-00979D?style=for-the-badge&logo=arduino&logoColor=white)](https://arduino.cc)
-[![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
-
-<br/>
-
-```
-╔══════════════════════════════════════════════════════════════════════════════╗
-║  Real-time collaborative coding for Arduino hardware  ·  No local IDE       ║
-║  Sandboxed cloud compilation  ·  Sub-100ms WebSocket sync                   ║
-║  Built before Arduino officially launched its own cloud IDE                 ║
-╚══════════════════════════════════════════════════════════════════════════════╝
-```
+[![Node.js](https://img.shields.io/badge/Node.js-Runtime-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org)
+[![Docker](https://img.shields.io/badge/Docker-Sandboxed_Compilation-2496ED?style=flat-square&logo=docker&logoColor=white)](https://docker.com)
+[![WebSockets](https://img.shields.io/badge/WebSockets-Sub_100ms_Sync-00B0FF?style=flat-square)](.)
+[![GCP](https://img.shields.io/badge/GCP-Cloud_Deployed-4285F4?style=flat-square&logo=googlecloud&logoColor=white)](https://cloud.google.com)
+[![Arduino CLI](https://img.shields.io/badge/Arduino_CLI-Cloud_Compilation-00979D?style=flat-square&logo=arduino&logoColor=white)](https://arduino.cc)
+[![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
 
 </div>
 
 ---
 
-## The Idea — Before Arduino Did It
+## Overview
 
-> In 2024, Arduino launched **Arduino Cloud Editor** — a browser-based IDE for writing and managing Arduino sketches online. Aura-Sync was already building this.
+**Aura-Sync** is a real-time collaborative cloud IDE built specifically for Arduino hardware development. Multiple engineers can write, compile, and flash Arduino sketches simultaneously from any browser — with no local IDE installation, no environment setup, and no version conflicts.
 
-The difference: Aura-Sync isn't just a cloud editor. It's a **real-time collaborative environment** — think Google Docs, but for firmware engineers. Multiple developers can write, compile, and flash Arduino code simultaneously, from different locations, on the same project, with sub-100ms synchronisation.
+Think Google Docs, but for embedded systems engineers.
 
-The problem it solves is real and unsolved in the embedded world:
+The project was conceived and built independently — before Arduino officially launched its own cloud editor. Aura-Sync takes the concept further: it is not just a cloud editor, it is a **live collaborative environment** where every keystroke, compilation result, and error is synchronised across all connected participants in under 100ms.
 
-```
-┌──────────────────────────────────────────────────────────────────────┐
-│  EMBEDDED TEAMS TODAY                                                │
-│  ──────────────────────────────────────────────────────────────────  │
-│  "Let me send you the .ino file over WhatsApp"                       │
-│  "Which version are you on? I made changes last night"               │
-│  "My Arduino IDE version throws a different error than yours"        │
-│  "I can't reproduce the bug — it only happens on your machine"       │
-│                                                                      │
-│  AURA-SYNC                                                           │
-│  ──────────────────────────────────────────────────────────────────  │
-│  One shared session. One cloud compiler. One live environment.       │
-│  Everyone sees the same code, the same errors, in real time.         │
-└──────────────────────────────────────────────────────────────────────┘
-```
+The system was deployed to **Google Cloud Platform (GCP)** and is currently running locally due to cloud billing constraints.
+
+---
+
+## The Problem
+
+Embedded development teams share a set of friction points that no existing tool properly solves:
+
+- Sketches are passed around as `.ino` files over chat, email, or shared drives
+- Environment mismatches between team members cause bugs that are impossible to reproduce
+- There is no native way for two engineers to work on the same firmware simultaneously
+- Reviewing or debugging a colleague's Arduino code requires setting up a matching local environment
+
+Aura-Sync eliminates all of these by moving the entire development environment to the cloud and adding real-time collaboration on top.
 
 ---
 
 ## System Architecture
 
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                        AURA-SYNC — SYSTEM ARCHITECTURE                      │
-│                                                                             │
-│   CLIENT A  ──┐                                                             │
-│   (Browser)   │                                                             │
-│               ├──► [WebSocket Server]  ──────────────────────────────────┐  │
-│   CLIENT B  ──┤    Node.js             Sub-100ms                         │  │
-│   (Browser)   │    Real-time sync      bi-directional                    │  │
-│               │    broadcast           sync                              │  │
-│   CLIENT C  ──┘                          │                               │  │
-│                                          ▼                               │  │
-│                              ┌───────────────────────┐                  │  │
-│                              │   Docker Container    │                  │  │
-│                              │   Sandboxed           │                  │  │
-│                              │   Compilation         │                  │  │
-│                              │   Environment         │                  │  │
-│                              └───────────┬───────────┘                  │  │
-│                                          │                               │  │
-│                                          ▼                               │  │
-│                              ┌───────────────────────┐                  │  │
-│                              │   Arduino CLI          │                  │  │
-│                              │   · Compile sketch     │                  │  │
-│                              │   · Validate libs      │                  │  │
-│                              │   · Generate binary    │                  │  │
-│                              └───────────┬───────────┘                  │  │
-│                                          │                               │  │
-│                                          ▼                               │  │
-│                              ┌───────────────────────┐                  │  │
-│                              │   Flash / Download    │                  │  │
-│                              │   Remote hardware     │                  │  │
-│                              │   via shareable link  │                  │  │
-│                              └───────────────────────┘                  │  │
-│                                                                          │  │
-│   ┌──────────────────────────────────────────────────────────────────┐  │  │
-│   │   GCP  (Production)  →  currently running locally                │◄─┘  │
-│   └──────────────────────────────────────────────────────────────────┘     │
-└─────────────────────────────────────────────────────────────────────────────┘
-```
+<div align="center">
+
+| Layer | Component | Role |
+|---|---|---|
+| **Client** | Browser-based editor | Code input, error display, session UI |
+| **Sync** | WebSocket server (Node.js) | Sub-100ms bi-directional state broadcast |
+| **Compilation** | Docker container + Arduino CLI | Sandboxed, consistent cloud compilation |
+| **Cloud** | Google Cloud Platform | Scalable deployment via Cloud Run |
+| **Hardware** | Arduino (remote) | Target device for compiled firmware |
+
+</div>
+
+### Data Flow
+
+When a user writes code and triggers a compile, the following happens:
+
+1. The sketch is broadcast to all connected clients via WebSocket
+2. The server spawns a sandboxed Docker container
+3. Arduino CLI inside the container compiles the sketch against the selected board target
+4. Compilation output — success or errors — is returned to all connected clients simultaneously
+5. On success, the compiled binary is available for download or direct flash to connected hardware
 
 ---
 
-## How It Works — End to End
+## Key Features
 
-```bash
-aura-sync:~$ explain --how-it-works
-```
-
-**1. Session Creation**
-A user opens Aura-Sync in the browser and creates a new sketch session. A unique shareable link is generated. Anyone with the link joins the same live editor.
-
-**2. Real-Time Sync**
-Every keystroke is broadcast via WebSockets to all connected clients. Changes appear on every collaborator's screen in under 100ms — no polling, no refresh, no manual saves.
-
-**3. Cloud Compilation**
-When a user hits **Compile**, the sketch is sent to a sandboxed Docker container on the server. Arduino CLI inside the container compiles the code in an isolated environment — no local Arduino IDE required on any client machine.
-
-**4. Error Feedback**
-Compilation errors are returned in real time to all connected clients. Everyone sees the same error output simultaneously — no "works on my machine" situations.
-
-**5. Flash / Download**
-The compiled binary is available for direct flashing to connected Arduino hardware via a browser-accessible endpoint, or for download and manual flash.
-
----
-
-## Why Each Technology Was Chosen
-
-```
-┌──────────────────┬─────────────────────────────────────────────────────────┐
-│  Technology      │  Why                                                    │
-├──────────────────┼─────────────────────────────────────────────────────────┤
-│  WebSockets      │  Persistent bi-directional connection — HTTP polling    │
-│                  │  can't achieve sub-100ms sync for collaborative editing  │
-├──────────────────┼─────────────────────────────────────────────────────────┤
-│  Docker          │  Each compilation runs in an isolated container —       │
-│                  │  prevents library conflicts, version mismatches, and    │
-│                  │  malicious sketch execution on the host system          │
-├──────────────────┼─────────────────────────────────────────────────────────┤
-│  Arduino CLI     │  Headless compilation without Arduino IDE —             │
-│                  │  scriptable, version-pinnable, CI/CD compatible         │
-├──────────────────┼─────────────────────────────────────────────────────────┤
-│  Node.js         │  Event-driven, non-blocking I/O — handles hundreds of   │
-│                  │  simultaneous WebSocket connections without threading   │
-├──────────────────┼─────────────────────────────────────────────────────────┤
-│  GCP             │  Containerised deployment — scalable, globally          │
-│                  │  distributed, paired with Cloud Run for serverless      │
-└──────────────────┴─────────────────────────────────────────────────────────┘
-```
-
----
-
-## Features
-
-**Real-Time Collaborative Editor**
-Multiple engineers editing the same `.ino` sketch simultaneously. Cursors, changes, and errors visible to all participants in real time.
+**Real-Time Collaborative Editing**
+Multiple engineers work on the same sketch at the same time. Every change is reflected across all sessions in under 100ms — no manual syncing, no file sharing.
 
 **Sandboxed Cloud Compilation**
-Sketches compile inside Docker — no environment setup, no version conflicts, no local Arduino IDE needed. The compiler is always consistent.
+Every compilation runs inside an isolated Docker container. This eliminates local environment dependencies, ensures consistent compiler behaviour across all users, and prevents untrusted sketch code from affecting the host system.
+
+**No Local IDE Required**
+The entire development workflow — writing, compiling, error checking, and flashing — runs in the browser. Team members need nothing installed on their machines.
 
 **Shareable Session Links**
-One link. Anyone clicks it, joins the live session instantly. No accounts required to collaborate.
+Each project session generates a unique link. Any collaborator with the link joins the live environment instantly.
 
 **Remote Hardware Access**
-Flash compiled firmware to Arduino hardware connected remotely. Teams debug physical devices without being in the same room.
+Compiled binaries can be flashed to Arduino hardware connected remotely, enabling distributed hardware debugging without physical co-location.
 
-**Sub-100ms Sync Latency**
-WebSocket architecture keeps all clients synchronised at under 100ms — fast enough to feel like a local editor.
+**GCP-Ready Deployment**
+The system was architected for cloud deployment from day one, with containerised services and a stateless backend that scales horizontally on Cloud Run.
+
+---
+
+## Why These Technologies
+
+**WebSockets over HTTP**
+Collaborative editing requires persistent, low-latency bi-directional communication. HTTP polling introduces noticeable lag and unnecessary server load. WebSockets maintain a persistent connection and push changes the moment they occur — essential for a sub-100ms sync target.
+
+**Docker for compilation**
+Compiling user-submitted Arduino code on a shared server without isolation is a security risk. Docker containers sandbox each compilation job, prevent library version conflicts between users, and ensure every team member compiles against an identical environment regardless of what they have installed locally.
+
+**Arduino CLI over Arduino IDE**
+Arduino CLI is headless, scriptable, and version-pinnable — making it ideal for automated server-side compilation. It supports all Arduino board targets, can manage libraries programmatically, and integrates cleanly into Docker-based CI pipelines.
+
+**Node.js for the server**
+Node.js is event-driven and non-blocking, which makes it well-suited for managing hundreds of concurrent WebSocket connections without the overhead of threading. Its async model handles real-time broadcast efficiently at scale.
 
 ---
 
 ## Tech Stack
 
-```bash
-aura-sync:~$ cat package.json --tech-only
-```
-
-```json
-{
-  "runtime":     "Node.js",
-  "realtime":    "WebSockets (ws / socket.io)",
-  "compilation": "Arduino CLI — inside Docker container",
-  "container":   "Docker — sandboxed build environment",
-  "cloud":       "Google Cloud Platform (GCP)",
-  "frontend":    "HTML + CSS + JS — browser-based editor",
-  "deployment":  "GCP Cloud Run (production) → localhost (current)"
-}
-```
+| Technology | Version | Purpose |
+|---|---|---|
+| Node.js | 18+ | Server runtime |
+| WebSockets | — | Real-time collaborative sync |
+| Docker | Latest | Sandboxed compilation environment |
+| Arduino CLI | Latest stable | Headless cloud sketch compilation |
+| Google Cloud Platform | — | Production deployment (Cloud Run) |
+| HTML / CSS / JavaScript | — | Browser-based editor interface |
 
 ---
 
-## Quickstart — Run Locally
+## Getting Started
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org) v18+
+- [Node.js](https://nodejs.org) v18 or higher
 - [Docker](https://docker.com) installed and running
-- [Arduino CLI](https://arduino.github.io/arduino-cli/) (or handled inside container)
+- Git
 
-### 1. Clone
+### Installation
+
+**Clone the repository:**
 
 ```bash
 git clone https://github.com/Srevarshan05/Aura-Sync.git
 cd Aura-Sync
 ```
 
-### 2. Install Dependencies
+**Install dependencies:**
 
 ```bash
 npm install
 ```
 
-### 3. Build the Docker Compilation Container
+**Build the Docker compilation container:**
 
 ```bash
 docker build -t aura-sync-compiler ./docker
 ```
 
-### 4. Start the Server
+**Start the server:**
 
 ```bash
 npm start
-# → WebSocket server running on ws://localhost:3000
-# → Browser editor at   http://localhost:3000
 ```
 
-### 5. Open a Session
+The editor will be available at `http://localhost:3000`.
 
-```
-1. Open http://localhost:3000 in your browser
+### Starting a Collaborative Session
+
+1. Open `http://localhost:3000` in your browser
 2. Create a new sketch session
-3. Copy the shareable link
-4. Open it in a second browser tab (or send to a collaborator)
-5. Both editors are now live-synced
-```
+3. Copy the generated shareable session link
+4. Share it with collaborators — they join the live session instantly
+5. Write code, compile, and see results in real time across all connected clients
 
 ---
 
@@ -236,20 +170,20 @@ npm start
 Aura-Sync/
 │
 ├── server/
-│   ├── index.js              # WebSocket server + session management
-│   ├── compiler.js           # Arduino CLI integration + Docker spawn
-│   └── sessions.js           # Live session state management
+│   ├── index.js              # WebSocket server and session management
+│   ├── compiler.js           # Arduino CLI integration and Docker orchestration
+│   └── sessions.js           # Live session state
 │
 ├── docker/
-│   └── Dockerfile            # Sandboxed Arduino CLI build environment
+│   └── Dockerfile            # Sandboxed Arduino CLI compilation environment
 │
 ├── client/
-│   ├── index.html            # Browser-based collaborative editor
-│   ├── editor.js             # WebSocket client + real-time sync logic
-│   └── style.css             # Editor UI
+│   ├── index.html            # Browser editor
+│   ├── editor.js             # WebSocket client and real-time sync
+│   └── style.css             # Editor interface styles
 │
 ├── .gcp/
-│   └── cloudbuild.yaml       # GCP Cloud Run deployment config
+│   └── cloudbuild.yaml       # GCP Cloud Run deployment configuration
 │
 ├── package.json
 └── README.md
@@ -257,23 +191,18 @@ Aura-Sync/
 
 ---
 
-## Deployment
+## Cloud Deployment
 
-### Current Status
+Aura-Sync was designed for and deployed to **Google Cloud Platform** using Cloud Run. It is currently running locally due to billing constraints on the GCP project.
 
-```
-[✓]  Local deployment  —  fully functional on localhost
-[ ]  GCP Cloud Run     —  previously deployed, paused due to billing
-```
-
-### Re-deploy to GCP
+### Re-deploying to GCP
 
 ```bash
-# Authenticate
+# Authenticate with GCP
 gcloud auth login
 gcloud config set project YOUR_PROJECT_ID
 
-# Build and push container
+# Build and push the container image
 gcloud builds submit --tag gcr.io/YOUR_PROJECT_ID/aura-sync
 
 # Deploy to Cloud Run
@@ -284,40 +213,34 @@ gcloud run deploy aura-sync \
   --allow-unauthenticated
 ```
 
-> **Note:** Cloud Run scales to zero when idle — use `--min-instances=1` if you need persistent WebSocket connections without cold starts.
+> For persistent WebSocket connections without cold-start interruptions, set `--min-instances=1` in the Cloud Run configuration.
 
 ---
 
 ## Roadmap
 
-```bash
-aura-sync:~$ cat roadmap.txt
-```
-
-```
-[✓]  Real-time collaborative editing via WebSockets
-[✓]  Sandboxed cloud compilation via Docker + Arduino CLI
-[✓]  Shareable session links
-[✓]  GCP Cloud Run deployment
-[✓]  Remote hardware flash via compiled binary
-[ ]  Syntax highlighting + Arduino-aware autocomplete
-[ ]  Multi-file sketch support (libraries, headers)
-[ ]  Git integration — version control inside the IDE
-[ ]  Live serial monitor — read hardware output in browser
-[ ]  User authentication + persistent project storage
-[ ]  Board manager UI — select target board from browser
-[ ]  Re-deploy to GCP with cost-optimised Cloud Run config
-```
+| Status | Feature |
+|---|---|
+| ✅ Done | Real-time collaborative editing via WebSockets |
+| ✅ Done | Sandboxed cloud compilation via Docker + Arduino CLI |
+| ✅ Done | Shareable session links |
+| ✅ Done | GCP Cloud Run deployment |
+| ✅ Done | Remote hardware flash via compiled binary |
+| 🔲 Planned | Syntax highlighting and Arduino-aware autocomplete |
+| 🔲 Planned | Multi-file sketch support (libraries, headers) |
+| 🔲 Planned | Git integration inside the IDE |
+| 🔲 Planned | Live serial monitor — read hardware output in browser |
+| 🔲 Planned | Board manager UI — select target board from browser |
+| 🔲 Planned | User authentication and persistent project storage |
+| 🔲 Planned | Re-deploy to GCP with cost-optimised Cloud Run configuration |
 
 ---
 
-## The Bigger Picture
+## Context
 
-Aura-Sync was conceived and built as a **pre-final year student project** — before Arduino formally entered the cloud IDE space.
+Aura-Sync was built as an independent project by a pre-final year student — conceived and developed before Arduino formally entered the cloud IDE space. The architectural decisions made here — sandboxed compilation, WebSocket-first synchronisation, containerised cloud deployment — reflect the same design choices that production embedded development platforms now use commercially.
 
-The architectural decisions — sandboxed Docker compilation, WebSocket-first sync, stateless cloud deployment — mirror exactly what production embedded dev platforms now use. This wasn't a tutorial follow-along. It was an original system built from first principles, deployed to production infrastructure, and validated by real usage.
-
-> *"The best way to predict the future is to build it before someone else does."*
+This is not a demo or an academic exercise. It is a working system that was deployed to production infrastructure, served real sessions, and demonstrated that collaborative embedded development in the browser is both technically viable and genuinely useful.
 
 ---
 
