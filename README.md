@@ -1,253 +1,957 @@
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0D47A1,00B0FF&height=200&section=header&text=Aura-Sync&fontSize=62&fontColor=ffffff&fontAlignY=36&desc=Real-Time%20Collaborative%20Cloud%20IDE%20for%20Arduino%20Hardware&descSize=14&descAlignY=58" width="100%"/>
+# 🚀 Aura Sync
+### AI-Powered Real-Time Collaborative Cloud IDE for Arduino Development
 
-<br/>
+<img src="assets/banner.png" width="100%"/>
 
-[![Node.js](https://img.shields.io/badge/Node.js-Runtime-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org)
-[![Docker](https://img.shields.io/badge/Docker-Sandboxed_Compilation-2496ED?style=flat-square&logo=docker&logoColor=white)](https://docker.com)
-[![WebSockets](https://img.shields.io/badge/WebSockets-Sub_100ms_Sync-00B0FF?style=flat-square)](.)
-[![GCP](https://img.shields.io/badge/GCP-Cloud_Deployed-4285F4?style=flat-square&logo=googlecloud&logoColor=white)](https://cloud.google.com)
-[![Arduino CLI](https://img.shields.io/badge/Arduino_CLI-Cloud_Compilation-00979D?style=flat-square&logo=arduino&logoColor=white)](https://arduino.cc)
-[![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
+[![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=for-the-badge&logo=node.js&logoColor=white)]()
+[![Docker](https://img.shields.io/badge/Docker-Latest-2496ED?style=for-the-badge&logo=docker&logoColor=white)]()
+[![Arduino](https://img.shields.io/badge/Arduino-CLI-00979D?style=for-the-badge&logo=arduino&logoColor=white)]()
+[![Google Cloud](https://img.shields.io/badge/Google%20Cloud-Cloud%20Run-4285F4?style=for-the-badge&logo=googlecloud&logoColor=white)]()
+[![WebSockets](https://img.shields.io/badge/WebSockets-Real--Time-blue?style=for-the-badge)]()
+[![License](https://img.shields.io/badge/License-MIT-success?style=for-the-badge)]()
 
-</div>
-
----
-
-## Overview
-
-**Aura-Sync** is a real-time collaborative cloud IDE built specifically for Arduino hardware development. Multiple engineers can write, compile, and flash Arduino sketches simultaneously from any browser — with no local IDE installation, no environment setup, and no version conflicts.
-
-Think Google Docs, but for embedded systems engineers.
-
-The project was conceived and built independently — before Arduino officially launched its own cloud editor. Aura-Sync takes the concept further: it is not just a cloud editor, it is a **live collaborative environment** where every keystroke, compilation result, and error is synchronised across all connected participants in under 100ms.
-
-The system was deployed to **Google Cloud Platform (GCP)** and is currently running locally due to cloud billing constraints.
-
----
-
-## The Problem
-
-Embedded development teams share a set of friction points that no existing tool properly solves:
-
-- Sketches are passed around as `.ino` files over chat, email, or shared drives
-- Environment mismatches between team members cause bugs that are impossible to reproduce
-- There is no native way for two engineers to work on the same firmware simultaneously
-- Reviewing or debugging a colleague's Arduino code requires setting up a matching local environment
-
-Aura-Sync eliminates all of these by moving the entire development environment to the cloud and adding real-time collaboration on top.
-
----
-
-## System Architecture
-
-<div align="center">
-
-| Layer | Component | Role |
-|---|---|---|
-| **Client** | Browser-based editor | Code input, error display, session UI |
-| **Sync** | WebSocket server (Node.js) | Sub-100ms bi-directional state broadcast |
-| **Compilation** | Docker container + Arduino CLI | Sandboxed, consistent cloud compilation |
-| **Cloud** | Google Cloud Platform | Scalable deployment via Cloud Run |
-| **Hardware** | Arduino (remote) | Target device for compiled firmware |
+*A browser-based collaborative Arduino IDE with real-time editing, AI-assisted code generation, cloud compilation, and remote hardware access.*
 
 </div>
 
-### Data Flow
+---
 
-When a user writes code and triggers a compile, the following happens:
+# 🌟 Overview
 
-1. The sketch is broadcast to all connected clients via WebSocket
-2. The server spawns a sandboxed Docker container
-3. Arduino CLI inside the container compiles the sketch against the selected board target
-4. Compilation output — success or errors — is returned to all connected clients simultaneously
-5. On success, the compiled binary is available for download or direct flash to connected hardware
+Aura Sync is a **real-time collaborative cloud IDE** built for **embedded systems and Arduino development**, enabling multiple engineers to write, compile, execute, and interact with hardware simultaneously from anywhere in the world.
+
+Unlike traditional Arduino workflows that rely on locally installed IDEs and manually sharing `.ino` files, Aura Sync brings the entire embedded development workflow into the browser.
+
+Think of it as:
+
+> **Google Docs × Visual Studio Code × Arduino IDE**
+
+but purpose-built for embedded systems.
+
+Every participant in a session views the exact same editor, receives live updates in real time, observes identical compiler output, and can collaboratively build firmware together.
+
+The platform combines:
+
+- ⚡ Real-time collaborative editing
+- 🤖 AI-powered Arduino C++ generation
+- 🐳 Sandboxed cloud compilation
+- 🔗 Shareable collaboration sessions
+- 🌍 Remote hardware access
+- ☁️ Cloud-native deployment
 
 ---
 
-## Key Features
+# 💡 The Story Behind Aura Sync
 
-**Real-Time Collaborative Editing**
-Multiple engineers work on the same sketch at the same time. Every change is reflected across all sessions in under 100ms — no manual syncing, no file sharing.
+Embedded systems development has traditionally been an individual workflow.
 
-**Sandboxed Cloud Compilation**
-Every compilation runs inside an isolated Docker container. This eliminates local environment dependencies, ensures consistent compiler behaviour across all users, and prevents untrusted sketch code from affecting the host system.
+One engineer writes code.
 
-**No Local IDE Required**
-The entire development workflow — writing, compiling, error checking, and flashing — runs in the browser. Team members need nothing installed on their machines.
+Another engineer receives the project.
 
-**Shareable Session Links**
-Each project session generates a unique link. Any collaborator with the link joins the live environment instantly.
+Someone else tries compiling it.
 
-**Remote Hardware Access**
-Compiled binaries can be flashed to Arduino hardware connected remotely, enabling distributed hardware debugging without physical co-location.
+Eventually someone says...
 
-**GCP-Ready Deployment**
-The system was architected for cloud deployment from day one, with containerised services and a stateless backend that scales horizontally on Cloud Run.
+> "It works on my machine."
 
----
+That single sentence inspired Aura Sync.
 
-## Why These Technologies
+Our goal was simple:
 
-**WebSockets over HTTP**
-Collaborative editing requires persistent, low-latency bi-directional communication. HTTP polling introduces noticeable lag and unnecessary server load. WebSockets maintain a persistent connection and push changes the moment they occur — essential for a sub-100ms sync target.
+> **Make embedded development collaborative, reproducible, and accessible entirely from the browser.**
 
-**Docker for compilation**
-Compiling user-submitted Arduino code on a shared server without isolation is a security risk. Docker containers sandbox each compilation job, prevent library version conflicts between users, and ensure every team member compiles against an identical environment regardless of what they have installed locally.
+Months before Arduino introduced its browser-first cloud development experience, our student team independently designed and built Aura Sync around these very ideas.
 
-**Arduino CLI over Arduino IDE**
-Arduino CLI is headless, scriptable, and version-pinnable — making it ideal for automated server-side compilation. It supports all Arduino board targets, can manage libraries programmatically, and integrates cleanly into Docker-based CI pipelines.
+Later, seeing Arduino publicly engage with our project was an incredibly motivating milestone that validated the direction we had taken as student engineers exploring the future of embedded software development.
 
-**Node.js for the server**
-Node.js is event-driven and non-blocking, which makes it well-suited for managing hundreds of concurrent WebSocket connections without the overhead of threading. Its async model handles real-time broadcast efficiently at scale.
+Aura Sync is the result of months of experimentation, cloud deployment, hardware integration, and collaborative engineering.
 
 ---
 
-## Tech Stack
+# 🎯 The Problem
 
-| Technology | Version | Purpose |
-|---|---|---|
-| Node.js | 18+ | Server runtime |
-| WebSockets | — | Real-time collaborative sync |
-| Docker | Latest | Sandboxed compilation environment |
-| Arduino CLI | Latest stable | Headless cloud sketch compilation |
-| Google Cloud Platform | — | Production deployment (Cloud Run) |
-| HTML / CSS / JavaScript | — | Browser-based editor interface |
+Traditional embedded development introduces several challenges:
 
----
+❌ Sharing `.ino` files manually
 
-## Getting Started
+❌ Different library versions
 
-### Prerequisites
+❌ Different compiler versions
 
-- [Node.js](https://nodejs.org) v18 or higher
-- [Docker](https://docker.com) installed and running
-- Git
+❌ Environment setup issues
 
-### Installation
+❌ Impossible to collaborate simultaneously
 
-**Clone the repository:**
+❌ Hardware tied to one physical computer
 
-```bash
-git clone https://github.com/Srevarshan05/Aura-Sync.git
-cd Aura-Sync
-```
+❌ Difficult remote debugging
 
-**Install dependencies:**
-
-```bash
-npm install
-```
-
-**Build the Docker compilation container:**
-
-```bash
-docker build -t aura-sync-compiler ./docker
-```
-
-**Start the server:**
-
-```bash
-npm start
-```
-
-The editor will be available at `http://localhost:3000`.
-
-### Starting a Collaborative Session
-
-1. Open `http://localhost:3000` in your browser
-2. Create a new sketch session
-3. Copy the generated shareable session link
-4. Share it with collaborators — they join the live session instantly
-5. Write code, compile, and see results in real time across all connected clients
+These limitations slow teams down significantly.
 
 ---
 
-## Project Structure
+# ✅ Our Solution
+
+Aura Sync transforms Arduino development into a collaborative cloud workflow.
+
+Developers simply open a browser and instantly gain access to:
+
+- Shared real-time editor
+- AI code assistant
+- Cloud compiler
+- Remote hardware
+- Live collaboration
+- Shareable sessions
+
+No local Arduino IDE.
+
+No setup.
+
+No dependency conflicts.
+
+No "works on my machine."
+
+---
+
+# ✨ Key Features
+
+## ⚡ Real-Time Collaborative Editing
+
+Multiple developers can edit the same Arduino sketch simultaneously.
+
+Every keystroke is synchronized across all connected users in **under 100ms** using persistent WebSocket connections.
+
+---
+
+## 🤖 AI-Powered Arduino Code Generation
+
+Aura Sync integrates an AI-powered backend capable of generating Arduino C++ code directly inside the editor.
+
+Developers can rapidly prototype firmware, generate boilerplate code, and accelerate development without leaving the IDE.
+
+---
+
+## 🐳 Sandboxed Cloud Compilation
+
+Every compile request runs inside an isolated Docker container.
+
+This provides:
+
+- identical compiler environments
+- secure execution
+- reproducible builds
+- isolated user sessions
+
+---
+
+## 🌍 Remote Hardware Access
+
+One of Aura Sync's most unique capabilities is remote hardware interaction.
+
+Arduino boards connected to one machine can be securely accessed from anywhere using a shareable session URL.
+
+This allows distributed teams to upload firmware and interact with physical hardware remotely.
+
+---
+
+## 🔗 Shareable Sessions
+
+Every collaborative project generates a unique session link.
+
+Simply share the URL.
+
+Anyone joining immediately becomes part of the live collaborative workspace.
+
+---
+
+## ☁️ Cloud Native Deployment
+
+Aura Sync was designed for deployment on **Google Cloud Platform (Cloud Run)** using containerized services.
+
+Although the current public deployment is paused due to cloud billing limitations, the complete cloud deployment pipeline remains part of the project.
+
+---
+
+# 🏗 System Architecture
 
 ```
+                    ┌──────────────────────┐
+                    │     Web Browser      │
+                    │ Collaborative Editor │
+                    └──────────┬───────────┘
+                               │
+                    Real-Time WebSockets
+                               │
+             ┌─────────────────▼──────────────────┐
+             │        Node.js Collaboration       │
+             │ Session Management + Sync Engine   │
+             └───────────────┬────────────────────┘
+                             │
+          ┌──────────────────┴───────────────────┐
+          │                                      │
+          ▼                                      ▼
+
+  AI Code Generation                     Docker Compiler
+
+ (AI Server Endpoint)              Arduino CLI Sandbox
+
+          │                                      │
+          └──────────────────┬───────────────────┘
+                             ▼
+
+                  Compiled Arduino Binary
+
+                             │
+                             ▼
+
+                   Remote Arduino Hardware
+
+```
+
+---
+
+# 🔄 How Aura Sync Works
+
+### Step 1
+
+A user creates a collaborative session.
+
+---
+
+### Step 2
+
+A shareable URL is generated.
+
+---
+
+### Step 3
+
+Collaborators join the session.
+
+---
+
+### Step 4
+
+Every code change is synchronized instantly using WebSockets.
+
+---
+
+### Step 5
+
+Users can request AI-generated Arduino code.
+
+---
+
+### Step 6
+
+The AI server generates optimized Arduino C++.
+
+---
+
+### Step 7
+
+Compilation occurs inside a Docker sandbox using Arduino CLI.
+
+---
+
+### Step 8
+
+Compiler logs are streamed back to every participant.
+
+---
+
+### Step 9
+
+The compiled firmware can be uploaded to remotely connected Arduino hardware.
+
+---
+
+# 🚀 Why Aura Sync?
+
+Aura Sync isn't simply another Arduino editor.
+
+It combines several production-grade concepts into one platform:
+
+- Real-time collaboration
+- Cloud-native compilation
+- AI-assisted programming
+- Hardware virtualization
+- Remote embedded development
+- Browser-first workflow
+
+The result is an end-to-end collaborative development experience for embedded systems.
+
+# 🛠️ Technology Stack
+
+Aura Sync combines modern web technologies, cloud infrastructure, containerization, and embedded tooling into a unified collaborative development platform.
+
+| Technology | Purpose |
+|------------|---------|
+| **Node.js** | Backend server & WebSocket communication |
+| **Express.js** | REST APIs |
+| **WebSockets** | Real-time collaborative editing |
+| **Docker** | Isolated compilation sandbox |
+| **Arduino CLI** | Headless Arduino compilation |
+| **Google Cloud Run** | Cloud deployment |
+| **HTML / CSS / JavaScript** | Browser IDE |
+| **Serial Communication** | Remote hardware access |
+| **AI Server** | Dynamic Arduino C++ code generation |
+
+---
+
+# 📂 Project Structure
+
+```text
 Aura-Sync/
 │
+├── client/
+│   ├── index.html
+│   ├── editor.js
+│   ├── websocket.js
+│   ├── hardware.js
+│   ├── ai.js
+│   └── style.css
+│
 ├── server/
-│   ├── index.js              # WebSocket server and session management
-│   ├── compiler.js           # Arduino CLI integration and Docker orchestration
-│   └── sessions.js           # Live session state
+│   ├── index.js
+│   ├── compiler.js
+│   ├── websocket.js
+│   ├── sessions.js
+│   ├── routes.js
+│   └── config.js
 │
 ├── docker/
-│   └── Dockerfile            # Sandboxed Arduino CLI compilation environment
+│   ├── Dockerfile
+│   └── compile.sh
 │
-├── client/
-│   ├── index.html            # Browser editor
-│   ├── editor.js             # WebSocket client and real-time sync
-│   └── style.css             # Editor interface styles
+├── ai-server/
+│   ├── app.py
+│   ├── prompts/
+│   ├── models/
+│   └── requirements.txt
 │
-├── .gcp/
-│   └── cloudbuild.yaml       # GCP Cloud Run deployment configuration
+├── hardware/
+│   ├── serialBridge.js
+│   └── tunnel.js
+│
+├── assets/
 │
 ├── package.json
+│
 └── README.md
 ```
 
 ---
 
-## Cloud Deployment
+# ⚙️ Getting Started
 
-Aura-Sync was designed for and deployed to **Google Cloud Platform** using Cloud Run. It is currently running locally due to billing constraints on the GCP project.
+## Prerequisites
 
-### Re-deploying to GCP
+Before running Aura Sync, ensure the following are installed:
+
+- Node.js **18+**
+- Docker
+- Git
+- Arduino CLI
+- Google Cloud SDK *(optional for deployment)*
+
+---
+
+## Clone the Repository
 
 ```bash
-# Authenticate with GCP
-gcloud auth login
-gcloud config set project YOUR_PROJECT_ID
+git clone https://github.com/Srevarshan05/Aura-Sync.git
 
-# Build and push the container image
-gcloud builds submit --tag gcr.io/YOUR_PROJECT_ID/aura-sync
-
-# Deploy to Cloud Run
-gcloud run deploy aura-sync \
-  --image gcr.io/YOUR_PROJECT_ID/aura-sync \
-  --platform managed \
-  --region us-central1 \
-  --allow-unauthenticated
+cd Aura-Sync
 ```
 
-> For persistent WebSocket connections without cold-start interruptions, set `--min-instances=1` in the Cloud Run configuration.
+---
+
+## Install Dependencies
+
+```bash
+npm install
+```
 
 ---
 
-## Roadmap
+## Build the Docker Compiler
+
+```bash
+docker build -t aura-sync-compiler ./docker
+```
+
+---
+
+## Start the Development Server
+
+```bash
+npm start
+```
+
+The editor will now be available at
+
+```
+http://localhost:3000
+```
+
+---
+
+# 🚀 Running Aura Sync
+
+## Create a Session
+
+Create a new collaborative workspace.
+
+---
+
+## Share the Link
+
+A unique collaboration URL is generated.
+
+Send it to your teammates.
+
+---
+
+## Collaborate
+
+Every participant joins the same editor.
+
+Typing, deleting, compiling and AI interactions occur live.
+
+---
+
+## Compile
+
+Compilation happens inside Docker using Arduino CLI.
+
+Results are streamed back to everyone.
+
+---
+
+## Upload
+
+Compiled firmware can be flashed directly to connected Arduino hardware.
+
+---
+
+# 🔌 Hardware Integration
+
+One of Aura Sync's most unique engineering achievements is remote hardware accessibility.
+
+Instead of restricting Arduino boards to the machine physically connected over USB, Aura Sync virtualizes hardware access through the collaboration server.
+
+This enables:
+
+- Remote flashing
+- Remote serial communication
+- Distributed hardware testing
+- Shared embedded development sessions
+
+Developers can access connected hardware from anywhere using nothing more than the shared session link.
+
+---
+
+# 🌍 Remote Hardware Workflow
+
+```text
+Remote User
+
+      │
+
+      ▼
+
+Collaborative Browser IDE
+
+      │
+
+      ▼
+
+Node.js Collaboration Server
+
+      │
+
+      ▼
+
+Serial Bridge
+
+      │
+
+      ▼
+
+USB Connected Arduino
+
+```
+
+Every collaborator interacts with the same physical hardware regardless of geographical location.
+
+---
+
+# 🤖 AI Code Generation
+
+Aura Sync includes an AI-powered programming assistant designed specifically for Arduino development.
+
+The AI server accepts prompts from the collaborative editor and dynamically generates Arduino C++ code.
+
+Generated code is inserted directly into the live editor, where every connected participant immediately sees the changes.
+
+Typical use cases include:
+
+- Sensor initialization
+- LCD programming
+- WiFi connectivity
+- Servo control
+- Robotics
+- Motor drivers
+- IoT applications
+- Interrupt handling
+- Embedded algorithms
+
+The AI server is deployed independently and consumed through REST endpoints by the collaborative editor.
+
+---
+
+# 🐳 Docker Compilation Engine
+
+Compiling arbitrary user code directly on the host machine introduces security and reproducibility concerns.
+
+Aura Sync solves this using isolated Docker containers.
+
+Every compilation request follows this lifecycle:
+
+```
+User Code
+
+      │
+
+      ▼
+
+Temporary Workspace
+
+      │
+
+      ▼
+
+Docker Container
+
+      │
+
+      ▼
+
+Arduino CLI
+
+      │
+
+      ▼
+
+Compiler Output
+
+      │
+
+      ▼
+
+Browser
+```
+
+Advantages include:
+
+- Secure execution
+- Environment consistency
+- Version locking
+- User isolation
+- Easy scalability
+
+---
+
+# ☁️ Google Cloud Deployment
+
+Aura Sync was designed as a cloud-native application.
+
+The production deployment targeted **Google Cloud Run**, enabling stateless containerized execution with automatic scaling.
+
+Deployment pipeline:
+
+```text
+GitHub
+
+     │
+
+     ▼
+
+Cloud Build
+
+     │
+
+     ▼
+
+Docker Image
+
+     │
+
+     ▼
+
+Cloud Run
+
+     │
+
+     ▼
+
+Public IDE
+```
+
+---
+
+## Deploy to Cloud Run
+
+Authenticate:
+
+```bash
+gcloud auth login
+
+gcloud config set project YOUR_PROJECT_ID
+```
+
+Build:
+
+```bash
+gcloud builds submit \
+--tag gcr.io/YOUR_PROJECT_ID/aura-sync
+```
+
+Deploy:
+
+```bash
+gcloud run deploy aura-sync \
+--image gcr.io/YOUR_PROJECT_ID/aura-sync \
+--platform managed \
+--region us-central1 \
+--allow-unauthenticated
+```
+
+For uninterrupted WebSocket sessions:
+
+```bash
+--min-instances=1
+```
+
+is recommended.
+
+---
+
+# 🔒 Security Considerations
+
+Aura Sync was engineered with security in mind.
+
+### ✔ Docker Isolation
+
+Every compilation occurs inside its own container.
+
+---
+
+### ✔ Session Isolation
+
+Each collaborative workspace maintains an independent session state.
+
+---
+
+### ✔ Stateless Backend
+
+The backend stores only active session information in memory.
+
+---
+
+### ✔ Hardware Gateway
+
+Hardware communication is mediated through a controlled bridge rather than exposing USB devices directly.
+
+---
+
+### ✔ Cloud-Ready Design
+
+Containerized services enable secure deployment behind managed cloud infrastructure.
+
+---
+
+# 📈 Scalability
+
+Aura Sync was designed to scale horizontally.
+
+Future deployments can support:
+
+- Multiple collaboration servers
+- Distributed WebSocket routing
+- Container pools
+- Dedicated AI inference servers
+- Kubernetes deployment
+- Load balancing
+- Persistent storage
+- Authentication services
+
+The architecture intentionally separates:
+
+- Collaboration
+- AI generation
+- Compilation
+- Hardware communication
+
+allowing each service to scale independently.
+
+---
+# 👥 Contributors
+
+Aura Sync was built by a passionate team of student engineers, with each contributor owning a critical subsystem of the platform. Every major component was independently engineered and later integrated into one cohesive collaborative development environment.
+
+---
+
+## 👨‍💻 Sre Varshan
+
+### Project Integration • Hardware Systems • Platform Engineering
+
+Sre Varshan led the end-to-end integration of Aura Sync, bringing together the collaboration backend, AI services, cloud infrastructure, and physical hardware into one seamless platform.
+
+### Responsibilities
+
+- Integrated all independently developed subsystems into a unified platform
+- Designed the complete system architecture and integration workflow
+- Connected the collaborative editor with the AI code generation server
+- Integrated the remote hardware communication layer
+- Solved USB/Serial Port conflict issues for concurrent hardware access
+- Implemented remote Arduino accessibility through shareable collaboration sessions
+- Built the hardware communication workflow enabling users to control Arduino boards from anywhere in the world
+- Managed deployment, testing, debugging and system validation
+- Coordinated project execution and feature integration
+
+> *Focused on transforming individual engineering components into a production-ready collaborative platform.*
+
+---
+
+## 👨‍💻 Nicholas Christo T
+
+### Backend Engineering • Real-Time Collaboration Infrastructure
+
+Nicholas designed and implemented the complete collaboration backend powering Aura Sync.
+
+### Responsibilities
+
+- Architected the real-time collaboration backend
+- Implemented WebSocket communication
+- Developed live collaborative editing synchronization
+- Engineered multi-user session management
+- Designed concurrent editing workflows
+- Built the sandboxed code execution engine
+- Implemented isolated compilation handling
+- Developed backend APIs
+- Optimized low-latency synchronization across connected users
+
+His backend architecture enables multiple developers to work together on the same Arduino sketch with near real-time synchronization.
+
+---
+
+## 👨‍💻 Karthik KS
+
+### AI Systems Engineering • Intelligent Code Generation
+
+Karthik designed and developed the AI backend responsible for generating Arduino C++ code dynamically inside Aura Sync.
+
+### Responsibilities
+
+- Designed the AI server architecture
+- Built the Arduino code generation pipeline
+- Developed prompt processing logic
+- Integrated AI inference workflows
+- Deployed the AI server as an independent API endpoint
+- Optimized generated Arduino C++ for embedded development
+- Exposed APIs consumed by the collaborative editor
+
+The AI server accelerates firmware development by generating Arduino-ready code directly inside the live collaborative editor.
+
+---
+
+# 🏆 Engineering Highlights
+
+Aura Sync combines several complex systems into a single collaborative embedded development platform.
+
+### Real-Time Collaboration
+
+- Live collaborative editing
+- Multi-user synchronization
+- Low-latency WebSocket communication
+- Shared compiler output
+
+---
+
+### AI-Assisted Programming
+
+- Dynamic Arduino C++ generation
+- AI-assisted embedded development
+- Live insertion into collaborative sessions
+
+---
+
+### Cloud Compilation
+
+- Docker sandboxing
+- Arduino CLI automation
+- Secure compilation environment
+- Reproducible builds
+
+---
+
+### Remote Hardware
+
+- Browser-to-Arduino communication
+- Remote firmware upload
+- Distributed hardware testing
+- Shareable hardware sessions
+
+---
+
+### Cloud Native Infrastructure
+
+- Containerized services
+- Google Cloud deployment
+- Stateless backend
+- Horizontally scalable architecture
+
+---
+
+# 🚀 Why Aura Sync is Unique
+
+Aura Sync is more than an online code editor.
+
+It combines ideas typically found across several independent platforms into a single integrated experience.
+
+✔ Collaborative IDE
+
+✔ AI Programming Assistant
+
+✔ Cloud Compiler
+
+✔ Remote Hardware Access
+
+✔ Browser IDE
+
+✔ Real-Time Synchronization
+
+✔ Containerized Execution
+
+✔ Embedded Development Platform
+
+Few student-built projects combine all of these capabilities into one cohesive system.
+
+---
+
+# 📈 Project Roadmap
 
 | Status | Feature |
-|---|---|
-| ✅ Done | Real-time collaborative editing via WebSockets |
-| ✅ Done | Sandboxed cloud compilation via Docker + Arduino CLI |
-| ✅ Done | Shareable session links |
-| ✅ Done | GCP Cloud Run deployment |
-| ✅ Done | Remote hardware flash via compiled binary |
-| 🔲 Planned | Syntax highlighting and Arduino-aware autocomplete |
-| 🔲 Planned | Multi-file sketch support (libraries, headers) |
-| 🔲 Planned | Git integration inside the IDE |
-| 🔲 Planned | Live serial monitor — read hardware output in browser |
-| 🔲 Planned | Board manager UI — select target board from browser |
-| 🔲 Planned | User authentication and persistent project storage |
-| 🔲 Planned | Re-deploy to GCP with cost-optimised Cloud Run configuration |
+|---------|----------|
+| ✅ | Real-time collaborative editing |
+| ✅ | WebSocket synchronization |
+| ✅ | AI-powered Arduino code generation |
+| ✅ | Docker sandboxed compilation |
+| ✅ | Remote hardware communication |
+| ✅ | Shareable collaboration sessions |
+| ✅ | Google Cloud deployment |
+| 🔲 | Authentication & user accounts |
+| 🔲 | Persistent project storage |
+| 🔲 | Multi-file Arduino projects |
+| 🔲 | Arduino library manager |
+| 🔲 | Live serial monitor |
+| 🔲 | Git integration |
+| 🔲 | Syntax highlighting improvements |
+| 🔲 | Board manager UI |
+| 🔲 | Team workspaces |
+| 🔲 | Kubernetes deployment |
 
 ---
 
-## Context
+# 💡 Inspiration
 
-Aura-Sync was built as an independent project by a pre-final year student — conceived and developed before Arduino formally entered the cloud IDE space. The architectural decisions made here — sandboxed compilation, WebSocket-first synchronisation, containerised cloud deployment — reflect the same design choices that production embedded development platforms now use commercially.
+Aura Sync began with a simple question:
 
-This is not a demo or an academic exercise. It is a working system that was deployed to production infrastructure, served real sessions, and demonstrated that collaborative embedded development in the browser is both technically viable and genuinely useful.
+> **Why can't embedded systems engineers collaborate as easily as software developers?**
+
+That question led to months of research, experimentation, cloud deployment, hardware integration, and countless iterations.
+
+Our team independently explored browser-based collaborative embedded development several months before Arduino publicly introduced its own browser-focused cloud development experience.
+
+While both projects were developed independently, it was incredibly motivating to later see Arduino engage with our work on social media. For our student team, that recognition validated the direction we had taken and encouraged us to continue building ambitious engineering projects.
+
+---
+
+# ❤️ Acknowledgements
+
+Aura Sync represents the combined efforts of three student engineers, each contributing a specialized subsystem to create one unified platform.
+
+Special thanks to:
+
+- **Nicholas Christo T** — Backend Engineering & Real-Time Collaboration
+- **Karthik KS** — AI Systems & Arduino Code Generation
+- **Sre Varshan** — Platform Integration, Hardware Systems & Deployment
+
+This project would not have been possible without the dedication, collaboration, and engineering contributions of every team member.
+
+---
+
+# 🤝 Contributing
+
+Contributions are welcome.
+
+If you would like to improve Aura Sync, feel free to:
+
+- Fork the repository
+- Create a feature branch
+- Commit your changes
+- Submit a Pull Request
+
+Bug reports, feature suggestions, and improvements are always appreciated.
+
+---
+
+# 📜 License
+
+This project is licensed under the **MIT License**.
+
+See the `LICENSE` file for additional information.
+
+---
+
+# ⭐ Support the Project
+
+If you found Aura Sync interesting or useful:
+
+- ⭐ Star this repository
+- 🍴 Fork the project
+- 💬 Share feedback
+- 🤝 Contribute improvements
+
+Every contribution helps make collaborative embedded development more accessible.
 
 ---
 
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0D47A1,00B0FF&height=120&section=footer&text=Built%20before%20Arduino%20did%20it.&fontSize=16&fontColor=ffffff&fontAlignY=65" width="100%"/>
+# 🚀 Aura Sync
 
-**[Sre Varshan](https://github.com/Srevarshan05)** · AI/ML Engineer · SRM Trichy · 2027
+### Building the Future of Collaborative Embedded Development
+
+*"From browser to hardware — together, in real time."*
+
+---
+
+**Made with ❤️ by**
+
+**Sre Varshan**
+
+**Nicholas Christo T**
+
+**Karthik KS**
+
+---
+
+*SRM Institute of Science and Technology, Tiruchirappalli*
 
 </div>
